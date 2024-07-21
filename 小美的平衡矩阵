@@ -1,0 +1,154 @@
+//2024.7.19_1 牛客网 美团笔试题
+
+
+//小美的平衡矩阵
+
+/* 1.用模拟的方法，只能AC五题
+#include <iostream>
+#include<vector>
+using namespace std;
+
+bool jud(int j,int k,int len,vector<vector<int> > board)
+{
+    int count[2]={0};
+    for(int a=j;a<j+len;a++)
+    for(int b=k;b<k+len;b++)
+    {
+        if(board[a][b]==0)
+        count[0]++;
+        else
+        count[1]++;
+    }
+    if(count[0]==count[1])
+    return true;
+    else return false;
+}
+
+int main() {
+   int n;
+   char x;
+   long long result;
+   cin>>n;
+   vector<vector<int>>  board(n,vector<int>(n,0));
+   for(int i=0;i<n;i++)
+   for(int j=0;j<n;j++)
+   {
+       cin>>x;
+       if(x!='\n')
+       board[i][j]=x-'0';
+   }
+   for(int i=0;i<n;i++)
+   { 
+      result=0;
+      if(i==0)
+      {
+        cout<<0<<endl;
+      }
+      else{
+        for(int j=0;j<n-i;j++)
+        for(int k=0;k<n-i;k++)
+        {
+            result+=(int)jud(j,k,i+1,board);
+        }
+        cout<<result<<endl;
+      }
+   }
+   return 0;
+}
+*/
+/* 2.使用前缀和
+*/
+#include <iostream>
+#include<vector>
+using namespace std;
+void prfect_matrix(int n,vector<string> board,vector<int>& result)
+{
+  vector<vector<int>> presum(n+1,vector<int>(n+1,0));
+  for(int i=0;i<n;i++)
+  {
+    int sum=0;
+    for(int j=0;j<n;j++)
+    {
+      if(board[i][j]=='1')
+      sum++;
+      presum[i+1][j+1]=sum+presum[i][j+1];
+    }
+  }
+  for(int i=1;i<=n;i++)
+  {
+    if(i%2==1)
+    {
+      result[i]=0;
+    }
+    else{
+      for(int a=1;a<n-i+2;a++)
+      for(int b=1;b<n-i+2;b++){
+         int sum_ex=presum[a+i-1][b+i-1]-presum[a-1][b+i-1]-presum[a+i-1][b-1]+presum[a-1][b-1];
+         if(sum_ex==i*i/2)
+         result[i]++;
+        
+      }
+    }
+  }
+}
+int main() {
+  int n=0;
+  cin>>n;
+  vector<string> board(n);
+  for(int i=0;i<n;i++)
+  {
+    cin>>board[i];
+  }
+  vector<int> result(n+1,0);
+  prfect_matrix(n,board,result);
+  for(int i=1;i<=n;i++)
+  {
+    cout<<result[i]<<endl;
+  }
+}
+//用java复现，顺便学学java的语法
+
+import java.util.Scanner;
+
+public class first {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n=scanner.nextInt();
+        scanner.nextLine();
+        String[] board= new String[n];
+        for(int i=0;i<n;i++){
+            board[i]=scanner.nextLine();
+        }
+        scanner.close();
+        int[] result=new int[n+1];
+        perfect_matrix(n,board,result);
+        for(int i=1;i<=n;i++){
+            System.out.println(result[i]);}
+    }
+    private static void perfect_matrix(int n,String[] board, int[] result){
+        int[][] presum= new int[n+1][n+1];
+        for(int i=0;i<n;i++){
+            int sum=0;
+            for(int j=0;j<n;j++){
+                if(board[i].charAt(j)=='1')
+                sum++;
+                presum[i+1][j+1]=sum+presum[i][j+1];
+            }
+        }
+        for(int i=1;i<=n;i++){
+            if(i%2==1)
+            result[i]=0;
+            else
+            {
+                for(int a=1;a<n-i+2;a++){
+                    for(int b=1;b<n-i+2;b++){
+                    int sumEx=presum[a+i-1][b+i-1]-presum[a-1][b+i-1]-presum[a+i-1][b-1]+presum[a-1][b-1];
+                    if (sumEx == i * i / 2) {  
+                        result[i]++;  
+                    }      
+            }
+        }
+    }
+    }
+    }
+}
